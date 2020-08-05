@@ -11,11 +11,8 @@ import {
 } from "react-native";
 import { Button, Title } from "react-native-paper";
 import QRCode from "react-qr-code";
-import { Body, Header, Icon, Left, Right, DatePicker } from "native-base";
 import Loader from "../Admin/QR_Loader";
 import axios from "axios";
-import DateTimePicker from "react-native-modal-datetime-picker";
-import moment from "moment";
 import HeaderComp from "../Header";
 
 export default function qrgenerater({ navigation }) {
@@ -37,25 +34,29 @@ export default function qrgenerater({ navigation }) {
     setName(data);
   });
 
-  let [classes, setClasses] = useState([]);
   let [subjects, setSubjects] = useState([]);
 
   useEffect(() => {
-    getClasses();
+    getData();
     getSubjects();
   }, []);
 
-  const getClasses = () => {
-    axios
-      .post("http://krishma.webcodice.com/react-native/axios.php", {
-        request: 11,
+  const getData = () => {
+    AsyncStorage.getItem("user")
+      .then((data) => {
+        axios
+          .post("http://krishma.webcodice.com/react-native/axios.php", {
+            request: 24,
+            username: data,
+          })
+          .then((response) => {
+            setClassname(response.data[0].class_name);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
       })
-      .then((response) => {
-        setClasses(response.data);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+      .catch((err) => console.log(err));
   };
 
   const getSubjects = () => {
@@ -150,23 +151,6 @@ export default function qrgenerater({ navigation }) {
               </View>
             ) : null}
 
-            <Text style={styles.labelstyle}>Select Class: </Text>
-            <Picker
-              style={styles.pickerstyle}
-              theme={mytheme}
-              selectedValue={class_name}
-              onValueChange={(itemValue) => setClassname(itemValue)}
-            >
-              <Picker.Item label="Select Class" value="Class" />
-
-              {classes.map((x) => (
-                <Picker.Item
-                  key={x.class_id}
-                  label={x.class_name}
-                  value={x.class_name}
-                />
-              ))}
-            </Picker>
             <Text style={styles.labelstyle}>Select Section: </Text>
             <Picker
               style={styles.pickerstyle}
@@ -198,24 +182,7 @@ export default function qrgenerater({ navigation }) {
                 />
               ))}
             </Picker>
-            {/*<Text style={styles.labelstyle} theme={mytheme}>
-              Select Date:{" "}
-            </Text>
-            <Text
-              style={styles.textstyle}
-              onPress={() => showDateTimePicker()}
-              theme={mytheme}
-            >
-              {value ? moment(value).format(displayFormat) : "Select Date"}
-            </Text>
-            <DateTimePicker
-              date={value ? new Date(value) : new Date()}
-              theme={mytheme}
-              isVisible={showDate}
-              mode={mode}
-              onConfirm={handleDatePicked}
-              onCancel={() => hideDateTimePicker()}
-              />*/}
+
             <View style={{ alignItems: "center" }}>
               <Button
                 style={styles.button}

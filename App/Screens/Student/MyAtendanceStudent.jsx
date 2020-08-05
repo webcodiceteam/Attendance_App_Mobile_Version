@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { AsyncStorage, SafeAreaView, StyleSheet } from "react-native";
 import HeaderComp from "../Header";
 import axios from "axios";
-import { AttendanceViewCard } from "./Card";
+import { AttendanceViewCard } from "../Card/index";
 import Loader from "../Admin/QR_Loader";
 import { ScrollView } from "react-native-gesture-handler";
 

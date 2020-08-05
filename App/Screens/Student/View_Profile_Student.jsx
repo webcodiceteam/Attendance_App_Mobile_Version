@@ -15,7 +15,7 @@ import {
 import { Avatar } from "react-native-paper";
 import { ScrollView } from "react-native-gesture-handler";
 import HeaderComp from "../Header";
-import { ProfileData } from "./Card";
+import { ProfileData } from "../Card/index";
 
 export default function studentprofile({ navigation }) {
   let [student, setStudent] = useState([]);

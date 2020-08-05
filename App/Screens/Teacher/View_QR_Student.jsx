@@ -15,6 +15,7 @@ import { Title, Card } from "react-native-paper";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import axios from "axios";
 import HeaderComp from "../Header";
+import { StudentListAttendanceTeacher } from "../Card";
 
 export default function studentlist({ route, navigation }) {
   const { c } = route.params;
@@ -92,7 +93,6 @@ export default function studentlist({ route, navigation }) {
           section: sec,
         })
         .then((response1) => {
-          console.log(response1.data);
           if (response1.data === "  no") {
             setNostudent("No students");
           } else {
@@ -102,21 +102,19 @@ export default function studentlist({ route, navigation }) {
                 qrlink: qrlink,
               })
               .then((response2) => {
-                console.log(response2.data);
-
-                // if (response.data === "  no") {
-                //   setNostudent("No students");
-                // } else {
-                //   setTotal(response.data.length);
-                //   setStudents(response.data);
-                // }
-                //AsyncStorage.removeItem("class");
+                response1.data.map((x) => {
+                  response2.data.map((y) => {
+                    if (x.username === y.username) {
+                      x.Attendance_Status = 1;
+                    }
+                  });
+                });
+                setTotal(response1.data.length);
+                setStudents(response1.data);
               })
               .catch(function (error) {
                 console.log(error);
               });
-            setTotal(response1.data.length);
-            setStudents(response1.data);
           }
         })
         .catch(function (error) {
@@ -145,70 +143,16 @@ export default function studentlist({ route, navigation }) {
             <View style={styles.content}>
               <Title style={styles.welcome}>List of Students</Title>
               <Text>Total Students : {total}</Text>
-
-              {students.map((x) => (
-                <Card style={styles.mycard} key={x.id}>
-                  <View style={styles.cardView}>
-                    <TouchableOpacity
-                      onPress={() =>
-                        showModal(
-                          x.name,
-                          x.email,
-                          x.phone_no,
-                          x.image,
-                          x.gender,
-                          x.username,
-                          x.father_name,
-                          x.class_name,
-                          x.roll_no,
-                          x.id,
-                          x.dob,
-                          x.batch,
-                          x.section,
-                          x.registration,
-                          x.attendance_result
-                        )
-                      }
-                      key={x.id}
-                    >
-                      <Image
-                        style={{ width: 60, height: 60, borderRadius: 30 }}
-                        source={
-                          x.image
-                            ? { uri: x.image }
-                            : {
-                                uri:
-                                  "https://n8d.at/wp-content/plugins/aioseop-pro-2.4.11.1/images/default-user-image.png",
-                              }
-                        }
-                      />
-                    </TouchableOpacity>
-                    <View style={{ marginLeft: 10 }}>
-                      <Text style={styles.text}>User Name</Text>
-                      <Text style={styles.textstyle}>{x.username}</Text>
-                    </View>
-                    <View style={{ marginLeft: "2%" }}>
-                      <Text style={styles.text}>Date-Time</Text>
-                      <Text style={styles.textstyle}>{x.attendance_date}</Text>
-                    </View>
-                    <View>
-                      <Text
-                        style={{
-                          textAlign: "right",
-                          margin: "2%",
-                          marginTop: "20%",
-                        }}
-                      >
-                        {x.attendance_result == "Present" ? (
-                          <Text style={{ color: "green" }}>Present</Text>
-                        ) : (
-                          <Text style={{ color: "red" }}>Absent</Text>
-                        )}
-                      </Text>
-                    </View>
-                  </View>
-                </Card>
-              ))}
+              {students.map((x) => {
+                let { name, Attendance_Status, image } = x;
+                return (
+                  <StudentListAttendanceTeacher
+                    Student={name}
+                    S_Image={image}
+                    Status={Attendance_Status === 1 ? "Present" : "Absent"}
+                  />
+                );
+              })}
             </View>
           )}
         </ScrollView>

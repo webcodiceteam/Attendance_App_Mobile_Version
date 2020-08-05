@@ -37,15 +37,12 @@ export default function studentlist({ navigation }) {
   const [name, setName] = useState("");
 
   AsyncStorage.getItem("user").then((data) => {
-    // let user = data;
     setName(data);
   });
 
   const logout = () => {
     AsyncStorage.setItem("user", "");
-    // Actions.login();
   };
-
   return (
     <View style={styles.container}>
       <HeaderComp navigation={navigation} />

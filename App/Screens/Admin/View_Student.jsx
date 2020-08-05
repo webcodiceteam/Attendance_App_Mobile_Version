@@ -10,7 +10,6 @@ import {
   Modal,
   Picker,
   TouchableHighlight,
-  LayoutAnimation,
 } from "react-native";
 import {
   Title,
@@ -21,17 +20,8 @@ import {
 } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import * as Permissions from "expo-permissions";
-import { Actions } from "react-native-router-flux";
 import Swipeable from "react-native-swipeable";
-import {
-  Body,
-  Header,
-  Icon,
-  Left,
-  Right,
-  SwipeRow,
-  Content,
-} from "native-base";
+import { Icon } from "native-base";
 import axios from "axios";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import DateTimePicker from "react-native-modal-datetime-picker";
@@ -41,12 +31,9 @@ import * as ImageManipulator from "expo-image-manipulator";
 
 export default function studentlist({ navigation }) {
   const [showDate, setDate] = useState(false);
-
-  // const value = '';
   const mode = "date";
   const displayFormat = "DD/MM/YYYY";
-  let [students, setStudents] = useState([]);
-
+  const [students, setStudents] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [u_name, setUname] = useState("");
   const [email, setEmail] = useState("");
@@ -63,6 +50,7 @@ export default function studentlist({ navigation }) {
   const [registration, setRegistration] = useState("");
   const [father_name, setFather_name] = useState("");
   const [classes, setClasses] = useState([]);
+  const [selectedStudent, setSelectedStudent] = useState([]);
 
   useEffect(() => {
     getClasses();
@@ -149,7 +137,6 @@ export default function studentlist({ navigation }) {
         uploadimage(newfile);
       }
     } else {
-      // Alert.alert("No work");
     }
   };
 
@@ -174,10 +161,7 @@ export default function studentlist({ navigation }) {
   };
 
   const showDateTimePicker = () => {
-    //alert('showDateTimePicker');
     setDate(true);
-
-    // Keyboard.dismiss();
   };
 
   const hideDateTimePicker = () => {
@@ -190,7 +174,6 @@ export default function studentlist({ navigation }) {
   };
 
   const updatedata = () => {
-    // alert(id);
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
     if (
@@ -249,21 +232,16 @@ export default function studentlist({ navigation }) {
     setName(data);
   });
 
-  const renderItems = () => {
-    return this.state.data.map((item) => {
-      return (
-        <Item
-          key={item.id}
-          swipingCheck={(swiping) => this.setState({ swiping })}
-          message={item.message}
-          id={item.id}
-          cleanFromScreen={(id) => this.cleanFromScreen(id)}
-          leftButtonPressed={() => console.log("left button pressed")}
-          deleteButtonPressed={() => console.log("delete button pressed")}
-          editButtonPressed={() => console.log("edit button pressed")}
-        />
-      );
-    });
+  const selectedItems = (id) => {
+    let data = selectedStudent;
+    if (data.length === 0) {
+      data.push(id);
+      setSelectedStudent(data);
+    } else {
+      data = data.filter((x) => x !== id);
+      data.push(id);
+      setSelectedStudent(data);
+    }
   };
   return (
     <View style={styles.container}>
@@ -329,7 +307,11 @@ export default function studentlist({ navigation }) {
                     </TouchableHighlight>,
                   ]}
                 >
-                  <Card style={styles.mycard} key={x.id}>
+                  <Card
+                    style={styles.mycard}
+                    key={x.id}
+                    onLongPress={() => selectedItems(x.id)}
+                  >
                     <View style={styles.cardView}>
                       <TouchableOpacity
                         onPress={() =>
